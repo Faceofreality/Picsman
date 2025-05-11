@@ -8,6 +8,7 @@
   <meta property="og:title" content="ShareVault - Upload and Share Media">
   <meta property="og:description" content="Upload and share your pictures and videos with custom embeds">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ShareVault">
   <!-- README: To view this website, open index.html in a browser. Photos/videos are stored in browser memory. -->
   <!-- Open Graph image will be set dynamically when viewing content -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -412,6 +413,96 @@
       margin-top: 20px;
     }
     
+    /* Dedicated View Page */
+    .view-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 90vh;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .media-view-card {
+      width: 100%;
+      background-color: var(--bg-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    
+    .media-content {
+      max-height: 70vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #000;
+    }
+    
+    .media-content img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+    
+    .media-content video {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+    
+    .media-info {
+      padding: 24px;
+    }
+    
+    .media-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+    }
+    
+    .media-description {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .media-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .media-source {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    .media-source svg {
+      color: var(--primary);
+    }
+    
+    .media-home-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 640px) {
       .container {
@@ -441,6 +532,18 @@
       button {
         width: 100%;
       }
+      
+      .media-content {
+        max-height: 50vh;
+      }
+      
+      .media-title {
+        font-size: 1.3rem;
+      }
+      
+      .media-description {
+        font-size: 1rem;
+      }
     }
     
     /* Animations */
@@ -449,7 +552,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    main {
+    main, .media-view-card {
       animation: fadeIn 0.5s ease-out;
     }
     
@@ -479,105 +582,137 @@
     </div>
   </header>
 
-  <div class="container">
-    <div id="uploadSection">
-      <h1>Share Your Media</h1>
-      <p>Upload your pictures and videos, customize how they appear when shared, and get a unique link to share with anyone.</p>
-      
-      <main>
-        <form id="uploadForm">
-          <div id="uploadArea" class="upload-area">
-            <div class="upload-icon">📷</div>
-            <h3>Drag files here or click to upload</h3>
-            <p>Supports images and videos up to 50MB</p>
-            <input type="file" id="fileInput" accept="image/*,video/*">
-          </div>
-          
-          <div id="progressContainer" class="hidden">
-            <div class="progress-bar">
-              <div id="progressBar" class="progress"></div>
-            </div>
-            <p id="progressText">0% uploaded</p>
-          </div>
-          
-          <div id="previewArea" class="preview hidden">
-            <h3>Preview</h3>
-            <div id="filePreview"></div>
-            <p id="fileInfo" class="file-info"></p>
-          </div>
-          
-          <div class="form-group">
-            <label for="displayName">Display Name</label>
-            <input type="text" id="displayName" placeholder="How you want to be known">
-          </div>
-          
-          <div class="form-group">
-            <label for="bio">Bio or Description</label>
-            <textarea id="bio" placeholder="Brief description to be shown in the embed"></textarea>
-          </div>
-          
-          <button type="submit" id="submitBtn">Generate Shareable Link</button>
-        </form>
-      </main>
-    </div>
-    
-    <div id="shareSection" class="hidden">
-      <h1>Your media is ready to share!</h1>
-      <p>Your upload has been processed and your custom link is ready.</p>
-      
-      <main>
-        <div class="share-success">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
-          <span>Upload successful!</span>
+  <!-- View Only Media Section -->
+  <div id="viewMediaSection" class="hidden">
+    <div class="view-container">
+      <div class="media-view-card">
+        <div id="viewMediaContent" class="media-content">
+          <!-- Media content will be inserted here -->
         </div>
-        
-        <div>
-          <label>Your Shareable Link</label>
-          <div class="share-link-container">
-            <input type="text" id="shareLink" class="share-link" readonly>
-            <button id="copyBtn" class="copy-btn">
+        <div class="media-info">
+          <h1 id="viewMediaTitle" class="media-title"></h1>
+          <p id="viewMediaDescription" class="media-description"></p>
+          <div class="media-footer">
+            <div class="media-source">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
               </svg>
-              Copy
-            </button>
-          </div>
-          <p class="file-info">This link will create a custom embed when shared on Discord and other platforms.</p>
-        </div>
-        
-        <div class="embed-preview">
-          <div class="embed-header">Preview of Embed</div>
-          <div class="embed-content">
-            <div id="embedThumbnail" class="embed-thumbnail"></div>
-            <div class="embed-info">
-              <div id="embedTitle" class="embed-title"></div>
-              <div id="embedDescription" class="embed-description"></div>
-              <div class="embed-source">ShareVault</div>
+              ShareVault
             </div>
+            <a href="./" class="media-home-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              Upload your own
+            </a>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Section -->
+  <div id="uploadSection" class="container">
+    <h1>Share Your Media</h1>
+    <p>Upload your pictures and videos, customize how they appear when shared, and get a unique link to share with anyone.</p>
+    
+    <main>
+      <form id="uploadForm">
+        <div id="uploadArea" class="upload-area">
+          <div class="upload-icon">📷</div>
+          <h3>Drag files here or click to upload</h3>
+          <p>Supports images and videos up to 50MB</p>
+          <input type="file" id="fileInput" accept="image/*,video/*">
+        </div>
         
-        <div class="buttons">
-          <button id="newUploadBtn" class="upload-new">
+        <div id="progressContainer" class="hidden">
+          <div class="progress-bar">
+            <div id="progressBar" class="progress"></div>
+          </div>
+          <p id="progressText">0% uploaded</p>
+        </div>
+        
+        <div id="previewArea" class="preview hidden">
+          <h3>Preview</h3>
+          <div id="filePreview"></div>
+          <p id="fileInfo" class="file-info"></p>
+        </div>
+        
+        <div class="form-group">
+          <label for="displayName">Display Name</label>
+          <input type="text" id="displayName" placeholder="How you want to be known">
+        </div>
+        
+        <div class="form-group">
+          <label for="bio">Bio or Description</label>
+          <textarea id="bio" placeholder="Brief description to be shown in the embed"></textarea>
+        </div>
+        
+        <button type="submit" id="submitBtn">Generate Shareable Link</button>
+      </form>
+    </main>
+  </div>
+  
+  <!-- Share Section -->
+  <div id="shareSection" class="container hidden">
+    <h1>Your media is ready to share!</h1>
+    <p>Your upload has been processed and your custom link is ready.</p>
+    
+    <main>
+      <div class="share-success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>Upload successful!</span>
+      </div>
+      
+      <div>
+        <label>Your Shareable Link</label>
+        <div class="share-link-container">
+          <input type="text" id="shareLink" class="share-link" readonly>
+          <button id="copyBtn" class="copy-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
-            Upload Another
-          </button>
-          <button id="emailBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-            Share via Email
+            Copy
           </button>
         </div>
-      </main>
-    </div>
+        <p class="file-info">This link will create a custom embed when shared on Discord and other platforms.</p>
+      </div>
+      
+      <div class="embed-preview">
+        <div class="embed-header">Preview of Embed</div>
+        <div class="embed-content">
+          <div id="embedThumbnail" class="embed-thumbnail"></div>
+          <div class="embed-info">
+            <div id="embedTitle" class="embed-title"></div>
+            <div id="embedDescription" class="embed-description"></div>
+            <div class="embed-source">ShareVault</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="buttons">
+        <button id="newUploadBtn" class="upload-new">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+          </svg>
+          Upload Another
+        </button>
+        <button id="emailBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          Share via Email
+        </button>
+      </div>
+    </main>
   </div>
   
   <footer>
@@ -591,6 +726,7 @@
     // DOM elements
     const uploadSection = document.getElementById('uploadSection');
     const shareSection = document.getElementById('shareSection');
+    const viewMediaSection = document.getElementById('viewMediaSection');
     const uploadForm = document.getElementById('uploadForm');
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
@@ -609,6 +745,11 @@
     const embedThumbnail = document.getElementById('embedThumbnail');
     const embedTitle = document.getElementById('embedTitle');
     const embedDescription = document.getElementById('embedDescription');
+    
+    // View media page elements
+    const viewMediaContent = document.getElementById('viewMediaContent');
+    const viewMediaTitle = document.getElementById('viewMediaTitle');
+    const viewMediaDescription = document.getElementById('viewMediaDescription');
     
     // Variables
     let currentFile = null;
@@ -800,9 +941,20 @@
         progressBar.style.width = '100%';
         progressText.textContent = '100% uploaded';
         
+        // Get file data for OpenGraph tags
+        const fileData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(currentFile);
+        });
+        
+        // Save file data URL for embedding
+        localStorage.setItem(`filedata_${fileId}`, fileData);
+        
         // Show share section
         uploadSection.classList.add('hidden');
         shareSection.classList.remove('hidden');
+        viewMediaSection.classList.add('hidden');
         
         // Set share link
         shareLink.value = shareUrl;
@@ -831,12 +983,6 @@
         
         // For images, add og:image
         if (currentFile.type.startsWith('image/')) {
-          const fileData = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(currentFile);
-          });
-          
           if (!metaOgImage) {
             metaOgImage = document.createElement('meta');
             metaOgImage.setAttribute('property', 'og:image');
@@ -893,6 +1039,7 @@
       // Reset page state
       uploadSection.classList.remove('hidden');
       shareSection.classList.add('hidden');
+      viewMediaSection.classList.add('hidden');
       
       // Reset URL
       window.history.pushState({}, '', window.location.pathname);
@@ -913,8 +1060,56 @@
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
     
+    // Display media in the dedicated viewer
+    function displayMediaViewPage(mediaInfo, fileData) {
+      // Clear previous content
+      viewMediaContent.innerHTML = '';
+      
+      // Add media to the view
+      if (mediaInfo.fileType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = fileData;
+        viewMediaContent.appendChild(img);
+      } else if (mediaInfo.fileType.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = fileData;
+        video.controls = true;
+        video.autoplay = false;
+        viewMediaContent.appendChild(video);
+      }
+      
+      // Set title and description
+      viewMediaTitle.textContent = mediaInfo.displayName;
+      viewMediaDescription.textContent = mediaInfo.bio || '';
+      
+      // Update document title and meta tags for better sharing
+      document.title = `${mediaInfo.displayName} | ShareVault`;
+      
+      // Update OpenGraph meta tags for better embeds
+      if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName}`);
+      if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio || '');
+      
+      // For images, add og:image
+      if (mediaInfo.fileType.startsWith('image/')) {
+        if (!metaOgImage) {
+          metaOgImage = document.createElement('meta');
+          metaOgImage.setAttribute('property', 'og:image');
+          document.head.appendChild(metaOgImage);
+        }
+        metaOgImage.setAttribute('content', fileData);
+      }
+      
+      // Show view page
+      uploadSection.classList.add('hidden');
+      shareSection.classList.add('hidden');
+      viewMediaSection.classList.remove('hidden');
+    }
+    
     // Load media from URL parameter
     async function loadMediaFromId(mediaId) {
+      // Check if we're in direct view mode (when someone clicks a shared link)
+      const directView = !window.location.search.includes('edit');
+      
       // Try to load media info from storage
       const mediaInfoStr = localStorage.getItem(`media_${mediaId}`);
       
@@ -926,6 +1121,23 @@
       try {
         const mediaInfo = JSON.parse(mediaInfoStr);
         
+        // Get the file data from local storage
+        const fileData = localStorage.getItem(`file_${mediaInfo.fileId}`) || 
+                         localStorage.getItem(`filedata_${mediaInfo.fileId}`);
+        
+        if (!fileData) {
+          alert('Media file not found. It may have been deleted.');
+          return false;
+        }
+        
+        // If in direct view mode, show the media view page
+        if (directView) {
+          // Display the dedicated media view
+          displayMediaViewPage(mediaInfo, fileData);
+          return true;
+        }
+        
+        // If we're in edit mode, show the share screen
         // Set share link
         const shareUrl = `${window.location.origin}${window.location.pathname}?id=${mediaId}`;
         shareLink.value = shareUrl;
@@ -936,9 +1148,6 @@
         
         // Set embed thumbnail
         if (mediaInfo.fileType.startsWith('image/')) {
-          // Get the file data from local storage
-          const fileData = localStorage.getItem(`file_${mediaInfo.fileId}`);
-          
           if (fileData) {
             const img = document.createElement('img');
             img.src = fileData;
@@ -962,12 +1171,13 @@
         document.title = `${mediaInfo.displayName} | ShareVault`;
         
         // Update OpenGraph meta tags
-        if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName} | ShareVault`);
-        if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio);
+        if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName}`);
+        if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio || '');
         
         // Show share section
         uploadSection.classList.add('hidden');
         shareSection.classList.remove('hidden');
+        viewMediaSection.classList.add('hidden');
         
         return true;
       } catch (error) {
@@ -984,6 +1194,7 @@
         // Reset to upload view if no state
         uploadSection.classList.remove('hidden');
         shareSection.classList.add('hidden');
+        viewMediaSection.classList.add('hidden');
       }
     });
     
@@ -994,6 +1205,11 @@
       
       if (mediaId) {
         loadMediaFromId(mediaId);
+      } else {
+        // If no ID, show upload section
+        uploadSection.classList.remove('hidden');
+        shareSection.classList.add('hidden');
+        viewMediaSection.classList.add('hidden');
       }
     });
   </script>
