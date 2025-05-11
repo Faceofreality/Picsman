@@ -842,33 +842,56 @@
       return Date.now() + '-' + Math.random().toString(36).substring(2, 10);
     }
     
-    // Save file to "data" folder (in browser environment)
+    // Save file to "data" folder (actual server file storage)
     function saveFileToDataFolder(file, fileId) {
       return new Promise((resolve, reject) => {
-        // Create a fake URL that mimics a file save
-        const fileName = `${fileId}.${file.name.split('.').pop()}`;
+        // Create a file name with the file ID and extension
+        const fileExtension = file.name.split('.').pop();
+        const fileName = `${fileId}.${fileExtension}`;
         const filePath = `data/${fileName}`;
         
-        // In a real server-side environment, we'd actually write the file to disk
-        // For now, we'll store in localStorage
+        // Read the file as data URL to send to the server
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
           const fileData = e.target.result;
+          
           try {
-            // Store the binary data with a reference
+            // Send the file data to the server to save in the data folder
+            const response = await fetch('/upload', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                fileId: fileId,
+                fileData: fileData,
+                fileName: file.name,
+                contentType: file.type
+              })
+            });
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+              throw new Error(result.error || 'Failed to save file');
+            }
+            
+            // Also store in localStorage as a backup
             localStorage.setItem(`file_${fileId}`, fileData);
             
-            // Return a fake path (this would be a real path on a server)
-            resolve(filePath);
+            // Return the file path that can be used in embeds
+            resolve(result.filePath);
           } catch (error) {
+            console.error('Error saving file to server:', error);
             reject(error);
           }
         };
+        
         reader.onerror = function(error) {
+          console.error('Error reading file:', error);
           reject(error);
         };
         
-        // Read file as data URL
         reader.readAsDataURL(file);
       });
     }
@@ -977,18 +1000,38 @@
         // Update document title and meta tags for better sharing
         document.title = `${displayName} | ShareVault`;
         
+        // Create absolute URLs for OpenGraph tags
+        const currentUrl = window.location.href;
+        const domain = window.location.origin;
+        
+        // Get the absolute URL for the image
+        let imageFullUrl = '';
+        if (currentFile.type.startsWith('image/')) {
+          // Create a full absolute URL to the image for better Discord embeds
+          imageFullUrl = `${domain}${filePath}`;
+        }
+        
         // Update OpenGraph meta tags for better embeds
         if (metaOgTitle) metaOgTitle.setAttribute('content', `${displayName} | ShareVault`);
-        if (metaOgDescription) metaOgDescription.setAttribute('content', bio);
+        if (metaOgDescription) metaOgDescription.setAttribute('content', bio || '');
         
-        // For images, add og:image
+        // For images, add og:image with absolute URL
         if (currentFile.type.startsWith('image/')) {
           if (!metaOgImage) {
             metaOgImage = document.createElement('meta');
             metaOgImage.setAttribute('property', 'og:image');
             document.head.appendChild(metaOgImage);
           }
-          metaOgImage.setAttribute('content', fileData);
+          metaOgImage.setAttribute('content', imageFullUrl);
+          
+          // Also add more OpenGraph tags for better Discord embeds
+          let ogUrl = document.querySelector('meta[property="og:url"]');
+          if (!ogUrl) {
+            ogUrl = document.createElement('meta');
+            ogUrl.setAttribute('property', 'og:url');
+            document.head.appendChild(ogUrl);
+          }
+          ogUrl.setAttribute('content', shareUrl);
         }
         
         // Update URL without reloading the page
