@@ -32,17 +32,57 @@ body {
   transition: border-color 0.3s;
 }
 
-.upload-zone:hover {
-  border-color: #666;
+.upload-zone.drag-over {
+  border-color: #ff0000;
+  background-color: #fff5f5;
 }
 
-.file-list {
-  margin-top: 1rem;
-}
-
-.file-item {
-  background-color: #f8f8f8;
+.caption-input {
+  width: 100%;
   padding: 0.5rem;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
+  border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.file-preview {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.file-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 4px;
+}
+
+.share-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 1rem 0;
+}
+
+.share-item {
+  background-color: #ffebeb;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  border-left: 4px solid #ff0000;
+}
+
+.share-item a {
+  color: #ff0000;
+  text-decoration: none;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.share-item a:hover {
+  text-decoration: underline;
 }
