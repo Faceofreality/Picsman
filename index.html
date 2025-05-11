@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,52 +11,63 @@
     <h1>File Upload</h1>
     <div class="upload-zone" id="dropZone">
       <p>Drag & Drop files here or click to select</p>
-      <input type="file" id="fileInput" multiple style="display: none;">
+      <input type="file" id="fileInput" style="display: none;">
     </div>
-    <div class="file-list" id="fileList"></div>
+    <input type="text" id="caption" placeholder="Enter file caption/name" class="caption-input">
+    <div class="file-preview" id="filePreview"></div>
+    <button id="shareButton" class="share-btn">Generate Share Link</button>
+    <div id="shareLinks"></div>
   </div>
 
   <script>
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
+    const filePreview = document.getElementById('filePreview');
+    const shareButton = document.getElementById('shareButton');
+    const shareLinks = document.getElementById('shareLinks');
+    let currentFile = null;
 
     dropZone.addEventListener('click', () => fileInput.click());
-
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
-      dropZone.style.borderColor = '#666';
+      dropZone.classList.add('drag-over');
     });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.style.borderColor = '#ccc';
-    });
-
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
     dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
-      dropZone.style.borderColor = '#ccc';
+      dropZone.classList.remove('drag-over');
       handleFiles(e.dataTransfer.files);
     });
-
-    fileInput.addEventListener('change', (e) => {
-      handleFiles(e.target.files);
-    });
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
     function handleFiles(files) {
-      Array.from(files).forEach(file => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-        fileItem.textContent = `${file.name} (${formatFileSize(file.size)})`;
-        fileList.appendChild(fileItem);
-      });
+      if (files.length > 0) {
+        currentFile = files[0];
+        if (currentFile.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            filePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+          };
+          reader.readAsDataURL(currentFile);
+        } else {
+          filePreview.innerHTML = `<p>File: ${currentFile.name}</p>`;
+        }
+      }
     }
 
-    function formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(1024));
-      return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
-    }
+    shareButton.addEventListener('click', () => {
+      if (currentFile) {
+        const caption = document.getElementById('caption').value || 'Shared File';
+        const fileUrl = URL.createObjectURL(currentFile);
+        const shareLink = `
+          <div class="share-item">
+            <h3>${caption}</h3>
+            <a href="${fileUrl}" download="${currentFile.name}">Download File</a>
+          </div>
+        `;
+        shareLinks.innerHTML += shareLink;
+      }
+    });
   </script>
 </body>
 </html>
