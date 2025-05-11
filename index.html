@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareVault - Upload and Share Media</title>
+  <meta name="description" content="Upload and share your pictures and videos with custom embeds">
+  <meta property="og:title" content="ShareVault - Upload and Share Media">
+  <meta property="og:description" content="Upload and share your pictures and videos with custom embeds">
+  <meta property="og:type" content="website">
+  <!-- README: To view this website, open index.html in a browser. Photos/videos are stored in browser memory. -->
+  <!-- Open Graph image will be set dynamically when viewing content -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --primary-light: #60a5fa;
+      --primary-bg: #eff6ff;
+      --success: #10b981;
+      --text-dark: #1e293b;
+      --text-light: #64748b;
+      --text-lighter: #94a3b8;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --bg-lighter: #f1f5f9;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    
+    header {
+      background-color: var(--bg-white);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 15px 25px;
+    }
+    
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      background: linear-gradient(to right, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo svg {
+      stroke: var(--primary);
+    }
+    
+    h1 {
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      font-size: 2.2rem;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(to right, var(--text-dark), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    h2, h3 {
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+      font-weight: 600;
+    }
+    
+    p {
+      color: var(--text-light);
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+    }
+    
+    main {
+      background-color: var(--bg-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 35px;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+    }
+    
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 50px 30px;
+      text-align: center;
+      margin-bottom: 30px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background-color: var(--bg-lighter);
+    }
+    
+    .upload-area:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-bg);
+    }
+    
+    .upload-icon {
+      font-size: 56px;
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+    
+    .upload-area:hover .upload-icon {
+      transform: scale(1.1);
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+    
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-dark);
+      background-color: var(--bg-white);
+    }
+    
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    button:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background-color: var(--bg-lighter);
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress {
+      height: 100%;
+      background: linear-gradient(to right, var(--primary), var(--primary-light));
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 5px;
+    }
+    
+    .preview {
+      margin-bottom: 30px;
+      text-align: center;
+      padding: 20px;
+      background-color: var(--bg-lighter);
+      border-radius: var(--radius-md);
+    }
+    
+    .preview img, 
+    .preview video {
+      max-width: 100%;
+      max-height: 350px;
+      border-radius: var(--radius-sm);
+      margin-top: 15px;
+      box-shadow: var(--shadow-md);
+      border: 3px solid white;
+    }
+    
+    .file-info {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 10px;
+    }
+    
+    .share-success {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      color: var(--success);
+      background-color: rgba(16, 185, 129, 0.1);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+    }
+    
+    .share-link-container {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .share-link {
+      flex-grow: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      background-color: var(--bg-lighter);
+      font-size: 0.95rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .copy-btn {
+      background-color: var(--primary);
+      color: white;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .copy-btn:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .embed-preview {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 30px;
+      background-color: var(--bg-white);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .embed-header {
+      font-weight: 600;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+    }
+    
+    .embed-content {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .embed-thumbnail {
+      width: 100px;
+      height: 100px;
+      background-color: var(--bg-lighter);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .embed-thumbnail img,
+    .embed-thumbnail video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .embed-info {
+      flex-grow: 1;
+    }
+    
+    .embed-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 1.15rem;
+      color: var(--text-dark);
+    }
+    
+    .embed-description {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    
+    .embed-source {
+      font-size: 0.8rem;
+      color: var(--text-lighter);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .embed-source::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary);
+      border-radius: 50%;
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .upload-new {
+      background-color: transparent;
+      color: var(--text-dark);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .upload-new:hover {
+      background-color: var(--bg-lighter);
+      color: var(--primary);
+      border-color: var(--primary-light);
+    }
+    
+    #emailBtn {
+      background-color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    #emailBtn:hover {
+      background-color: var(--primary);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 30px 0;
+      color: var(--text-lighter);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .container {
+        padding: 20px 15px;
+      }
+      
+      main {
+        padding: 25px 20px;
+      }
+      
+      .embed-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .embed-thumbnail {
+        width: 100%;
+        height: 180px;
+        margin-bottom: 15px;
+      }
+      
+      .buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      button {
+        width: 100%;
+      }
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    main {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Utility classes */
+    .hidden {
+      display: none;
+    }
+    
+    .drag-active {
+      border-color: var(--primary);
+      background-color: var(--primary-bg);
+      transform: scale(1.01);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        ShareVault
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="uploadSection">
+      <h1>Share Your Media</h1>
+      <p>Upload your pictures and videos, customize how they appear when shared, and get a unique link to share with anyone.</p>
+      
+      <main>
+        <form id="uploadForm">
+          <div id="uploadArea" class="upload-area">
+            <div class="upload-icon">📷</div>
+            <h3>Drag files here or click to upload</h3>
+            <p>Supports images and videos up to 50MB</p>
+            <input type="file" id="fileInput" accept="image/*,video/*">
+          </div>
+          
+          <div id="progressContainer" class="hidden">
+            <div class="progress-bar">
+              <div id="progressBar" class="progress"></div>
+            </div>
+            <p id="progressText">0% uploaded</p>
+          </div>
+          
+          <div id="previewArea" class="preview hidden">
+            <h3>Preview</h3>
+            <div id="filePreview"></div>
+            <p id="fileInfo" class="file-info"></p>
+          </div>
+          
+          <div class="form-group">
+            <label for="displayName">Display Name</label>
+            <input type="text" id="displayName" placeholder="How you want to be known">
+          </div>
+          
+          <div class="form-group">
+            <label for="bio">Bio or Description</label>
+            <textarea id="bio" placeholder="Brief description to be shown in the embed"></textarea>
+          </div>
+          
+          <button type="submit" id="submitBtn">Generate Shareable Link</button>
+        </form>
+      </main>
+    </div>
+    
+    <div id="shareSection" class="hidden">
+      <h1>Your media is ready to share!</h1>
+      <p>Your upload has been processed and your custom link is ready.</p>
+      
+      <main>
+        <div class="share-success">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <span>Upload successful!</span>
+        </div>
+        
+        <div>
+          <label>Your Shareable Link</label>
+          <div class="share-link-container">
+            <input type="text" id="shareLink" class="share-link" readonly>
+            <button id="copyBtn" class="copy-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy
+            </button>
+          </div>
+          <p class="file-info">This link will create a custom embed when shared on Discord and other platforms.</p>
+        </div>
+        
+        <div class="embed-preview">
+          <div class="embed-header">Preview of Embed</div>
+          <div class="embed-content">
+            <div id="embedThumbnail" class="embed-thumbnail"></div>
+            <div class="embed-info">
+              <div id="embedTitle" class="embed-title"></div>
+              <div id="embedDescription" class="embed-description"></div>
+              <div class="embed-source">ShareVault</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="buttons">
+          <button id="newUploadBtn" class="upload-new">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+            </svg>
+            Upload Another
+          </button>
+          <button id="emailBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            Share via Email
+          </button>
+        </div>
+      </main>
+    </div>
+  </div>
+  
+  <footer>
+    &copy; <span id="currentYear"></span> ShareVault. All rights reserved.
+  </footer>
+
+  <script>
+    // Set current year in footer
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    
+    // DOM elements
+    const uploadSection = document.getElementById('uploadSection');
+    const shareSection = document.getElementById('shareSection');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const previewArea = document.getElementById('previewArea');
+    const filePreview = document.getElementById('filePreview');
+    const fileInfo = document.getElementById('fileInfo');
+    const displayNameInput = document.getElementById('displayName');
+    const bioInput = document.getElementById('bio');
+    const shareLink = document.getElementById('shareLink');
+    const copyBtn = document.getElementById('copyBtn');
+    const newUploadBtn = document.getElementById('newUploadBtn');
+    const emailBtn = document.getElementById('emailBtn');
+    const embedThumbnail = document.getElementById('embedThumbnail');
+    const embedTitle = document.getElementById('embedTitle');
+    const embedDescription = document.getElementById('embedDescription');
+    
+    // Variables
+    let currentFile = null;
+    let metaOgTitle = document.querySelector('meta[property="og:title"]');
+    let metaOgDescription = document.querySelector('meta[property="og:description"]');
+    let metaOgImage = document.querySelector('meta[property="og:image"]');
+    
+    // File drag & drop handling
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.classList.add('drag-active');
+    });
+    
+    uploadArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.classList.remove('drag-active');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadArea.classList.remove('drag-active');
+      
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFileSelect(e.dataTransfer.files[0]);
+      }
+    });
+    
+    // File input click handling
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+      }
+    });
+    
+    // Handle file selection
+    function handleFileSelect(file) {
+      // Validate file type
+      if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+        alert('Please select an image or video file.');
+        return;
+      }
+      
+      // Validate file size (max 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('Please select a file smaller than 50MB.');
+        return;
+      }
+      
+      currentFile = file;
+      
+
+      previewArea.classList.remove('hidden');
+      filePreview.innerHTML = '';
+      
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        filePreview.appendChild(img);
+      } else if (file.type.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.controls = true;
+        filePreview.appendChild(video);
+      }
+      
+
+      fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+    }
+    
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+
+    function generateId() {
+      return Math.random().toString(36).substring(2, 15);
+    }
+    
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const displayName = displayNameInput.value.trim();
+      const bio = bioInput.value.trim();
+      
+
+      if (!currentFile) {
+        alert('Please select a file to upload.');
+        return;
+      }
+      
+      if (!displayName) {
+        alert('Please enter a display name.');
+        return;
+      }
+      
+
+      progressContainer.classList.remove('hidden');
+      
+      try {
+
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 5;
+          if (progress <= 100) {
+            progressBar.style.width = progress + '%';
+            progressText.textContent = progress + '% uploaded';
+          } else {
+            clearInterval(interval);
+          }
+        }, 100);
+        
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileData = e.target.result;
+          
+          const fileId = generateId();
+          
+
+          const pageId = generateId();
+          
+
+
+          try {
+
+
+            console.log(`In a server app, would save to: data/${fileId}.${currentFile.name.split('.').pop()}`);
+            
+
+
+
+          } catch (err) {
+            console.log('Note: Running in browser mode, not saving to disk');
+          }
+          
+
+          const fileInfo = {
+            id: pageId,
+            displayName: displayName,
+            bio: bio || '',
+            fileName: currentFile.name,
+            fileType: currentFile.type,
+            fileSize: currentFile.size,
+            dataUrl: fileData
+          };
+          
+
+          localStorage.setItem(`media_${pageId}`, JSON.stringify(fileInfo));
+          
+
+          const shareUrl = `${window.location.origin}?id=${pageId}`;
+          
+
+          setTimeout(() => {
+            clearInterval(interval);
+            progressBar.style.width = '100%';
+            progressText.textContent = '100% uploaded';
+            
+
+            uploadSection.classList.add('hidden');
+            shareSection.classList.remove('hidden');
+            
+
+            shareLink.value = shareUrl;
+            
+
+            embedTitle.textContent = displayName;
+            embedDescription.textContent = bio;
+            
+            if (currentFile.type.startsWith('image/')) {
+              const img = document.createElement('img');
+              img.src = URL.createObjectURL(currentFile);
+              embedThumbnail.innerHTML = '';
+              embedThumbnail.appendChild(img);
+            } else {
+
+              embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
+            }
+            
+
+            document.title = `${displayName} | ShareVault`;
+            
+
+            if (metaOgTitle) metaOgTitle.setAttribute('content', `${displayName} | ShareVault`);
+            if (metaOgDescription) metaOgDescription.setAttribute('content', bio);
+            
+
+            if (currentFile.type.startsWith('image/')) {
+              if (!metaOgImage) {
+                metaOgImage = document.createElement('meta');
+                metaOgImage.setAttribute('property', 'og:image');
+                document.head.appendChild(metaOgImage);
+              }
+              metaOgImage.setAttribute('content', fileData);
+            }
+            
+
+            window.history.pushState({}, '', `?id=${pageId}`);
+          }, 1500);
+        };
+        
+
+        reader.readAsDataURL(currentFile);
+        
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert('Error uploading file. Please try again.');
+        progressContainer.classList.add('hidden');
+      }
+    });
+    
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(shareLink.value);
+        alert('Link copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy: ', err);
+        
+
+        shareLink.select();
+        document.execCommand('copy');
+        alert('Link copied to clipboard!');
+      }
+    });
+    
+
+    newUploadBtn.addEventListener('click', () => {
+
+      uploadForm.reset();
+      currentFile = null;
+      previewArea.classList.add('hidden');
+      progressContainer.classList.add('hidden');
+      
+
+      uploadSection.classList.remove('hidden');
+      shareSection.classList.add('hidden');
+      
+
+      window.history.pushState({}, '', window.location.pathname);
+      
+
+      document.title = 'ShareVault - Upload and Share Media';
+      
+
+      if (metaOgTitle) metaOgTitle.setAttribute('content', 'ShareVault - Upload and Share Media');
+      if (metaOgDescription) metaOgDescription.setAttribute('content', 'Upload and share your pictures and videos with custom embeds');
+      if (metaOgImage) metaOgImage.remove();
+    });
+    
+
+    emailBtn.addEventListener('click', () => {
+      const subject = "Check out my media on ShareVault";
+      const body = `I've shared some media with you: ${shareLink.value}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+    
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const mediaId = urlParams.get('id');
+      
+      if (mediaId) {
+
+        const mediaInfoStr = localStorage.getItem(`media_${mediaId}`);
+        
+        if (mediaInfoStr) {
+          const mediaInfo = JSON.parse(mediaInfoStr);
+          
+
+          const shareUrl = `${window.location.origin}?id=${mediaId}`;
+          shareLink.value = shareUrl;
+          
+
+          embedTitle.textContent = mediaInfo.displayName;
+          embedDescription.textContent = mediaInfo.bio;
+          
+
+          if (mediaInfo.fileType.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = mediaInfo.dataUrl;
+            embedThumbnail.innerHTML = '';
+            embedThumbnail.appendChild(img);
+          } else {
+
+            embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
+          }
+          
+
+          document.title = `${mediaInfo.displayName} | ShareVault`;
+          
+
+          if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName} | ShareVault`);
+          if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio);
+          
+
+          if (mediaInfo.fileType.startsWith('image/')) {
+            if (!metaOgImage) {
+              metaOgImage = document.createElement('meta');
+              metaOgImage.setAttribute('property', 'og:image');
+              document.head.appendChild(metaOgImage);
+            }
+            metaOgImage.setAttribute('content', mediaInfo.dataUrl);
+          }
+          
+
+          uploadSection.classList.add('hidden');
+          shareSection.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
