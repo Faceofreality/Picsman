@@ -12,13 +12,13 @@
   <!-- Open Graph image will be set dynamically when viewing content -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-
+    /* Basic Reset */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
+    
     :root {
       --primary: #3b82f6;
       --primary-dark: #2563eb;
@@ -39,20 +39,20 @@
       --radius-md: 10px;
       --radius-lg: 16px;
     }
-
+    
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg-light);
       color: var(--text-dark);
       line-height: 1.6;
     }
-
+    
     .container {
       max-width: 900px;
       margin: 0 auto;
       padding: 30px 20px;
     }
-
+    
     header {
       background-color: var(--bg-white);
       box-shadow: var(--shadow-sm);
@@ -63,7 +63,7 @@
       -webkit-backdrop-filter: blur(8px);
       background-color: rgba(255, 255, 255, 0.9);
     }
-
+    
     .header-container {
       display: flex;
       justify-content: space-between;
@@ -72,7 +72,7 @@
       margin: 0 auto;
       padding: 15px 25px;
     }
-
+    
     .logo {
       font-weight: 700;
       font-size: 1.5rem;
@@ -83,11 +83,11 @@
       align-items: center;
       gap: 10px;
     }
-
+    
     .logo svg {
       stroke: var(--primary);
     }
-
+    
     h1 {
       color: var(--text-dark);
       margin-bottom: 12px;
@@ -99,20 +99,20 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
+    
     h2, h3 {
       color: var(--text-dark);
       margin-bottom: 12px;
       letter-spacing: -0.01em;
       font-weight: 600;
     }
-
+    
     p {
       color: var(--text-light);
       margin-bottom: 24px;
       font-size: 1.05rem;
     }
-
+    
     main {
       background-color: var(--bg-white);
       border-radius: var(--radius-lg);
@@ -121,7 +121,7 @@
       margin-bottom: 40px;
       border: 1px solid var(--border);
     }
-
+    
     .upload-area {
       border: 2px dashed var(--border);
       border-radius: var(--radius-md);
@@ -132,12 +132,12 @@
       transition: all 0.2s ease;
       background-color: var(--bg-lighter);
     }
-
+    
     .upload-area:hover {
       border-color: var(--primary);
       background-color: var(--primary-bg);
     }
-
+    
     .upload-icon {
       font-size: 56px;
       color: var(--primary);
@@ -145,15 +145,15 @@
       display: inline-block;
       transition: transform 0.3s ease;
     }
-
+    
     .upload-area:hover .upload-icon {
       transform: scale(1.1);
     }
-
+    
     .form-group {
       margin-bottom: 25px;
     }
-
+    
     label {
       display: block;
       font-weight: 600;
@@ -161,11 +161,11 @@
       color: var(--text-dark);
       font-size: 0.95rem;
     }
-
+    
     input[type="file"] {
       display: none;
     }
-
+    
     input[type="text"],
     textarea {
       width: 100%;
@@ -178,19 +178,19 @@
       color: var(--text-dark);
       background-color: var(--bg-white);
     }
-
+    
     input[type="text"]:focus,
     textarea:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     }
-
+    
     textarea {
       resize: vertical;
       min-height: 100px;
     }
-
+    
     button {
       background-color: var(--primary);
       color: white;
@@ -203,18 +203,18 @@
       transition: all 0.2s ease;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-
+    
     button:hover {
       background-color: var(--primary-dark);
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
-
+    
     button:active {
       transform: translateY(0);
       box-shadow: var(--shadow-sm);
     }
-
+    
     .progress-bar {
       height: 10px;
       background-color: var(--bg-lighter);
@@ -222,7 +222,7 @@
       margin: 20px 0;
       overflow: hidden;
     }
-
+    
     .progress {
       height: 100%;
       background: linear-gradient(to right, var(--primary), var(--primary-light));
@@ -230,7 +230,7 @@
       transition: width 0.3s ease;
       border-radius: 5px;
     }
-
+    
     .preview {
       margin-bottom: 30px;
       text-align: center;
@@ -238,7 +238,7 @@
       background-color: var(--bg-lighter);
       border-radius: var(--radius-md);
     }
-
+    
     .preview img, 
     .preview video {
       max-width: 100%;
@@ -248,13 +248,13 @@
       box-shadow: var(--shadow-md);
       border: 3px solid white;
     }
-
+    
     .file-info {
       font-size: 0.85rem;
       color: var(--text-light);
       margin-top: 10px;
     }
-
+    
     .share-success {
       display: flex;
       align-items: center;
@@ -266,12 +266,12 @@
       border-radius: var(--radius-md);
       font-weight: 600;
     }
-
+    
     .share-link-container {
       display: flex;
       margin-bottom: 20px;
     }
-
+    
     .share-link {
       flex-grow: 1;
       padding: 12px 16px;
@@ -281,7 +281,7 @@
       font-size: 0.95rem;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-
+    
     .copy-btn {
       background-color: var(--primary);
       color: white;
@@ -291,11 +291,11 @@
       align-items: center;
       gap: 6px;
     }
-
+    
     .copy-btn:hover {
       background-color: var(--primary-dark);
     }
-
+    
     .embed-preview {
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -304,20 +304,20 @@
       background-color: var(--bg-white);
       box-shadow: var(--shadow-sm);
     }
-
+    
     .embed-header {
       font-weight: 600;
       margin-bottom: 16px;
       font-size: 1.1rem;
       color: var(--text-dark);
     }
-
+    
     .embed-content {
       display: flex;
       gap: 20px;
       align-items: center;
     }
-
+    
     .embed-thumbnail {
       width: 100px;
       height: 100px;
@@ -328,32 +328,32 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
-
+    
     .embed-thumbnail img,
     .embed-thumbnail video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
+    
     .embed-info {
       flex-grow: 1;
     }
-
+    
     .embed-title {
       font-weight: 700;
       margin-bottom: 8px;
       font-size: 1.15rem;
       color: var(--text-dark);
     }
-
+    
     .embed-description {
       font-size: 0.95rem;
       color: var(--text-light);
       margin-bottom: 8px;
       line-height: 1.5;
     }
-
+    
     .embed-source {
       font-size: 0.8rem;
       color: var(--text-lighter);
@@ -361,7 +361,7 @@
       align-items: center;
       gap: 5px;
     }
-
+    
     .embed-source::before {
       content: '';
       display: inline-block;
@@ -370,13 +370,13 @@
       background-color: var(--primary);
       border-radius: 50%;
     }
-
+    
     .buttons {
       display: flex;
       justify-content: space-between;
       margin-top: 30px;
     }
-
+    
     .upload-new {
       background-color: transparent;
       color: var(--text-dark);
@@ -385,24 +385,24 @@
       align-items: center;
       gap: 8px;
     }
-
+    
     .upload-new:hover {
       background-color: var(--bg-lighter);
       color: var(--primary);
       border-color: var(--primary-light);
     }
-
+    
     #emailBtn {
       background-color: var(--primary-light);
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
+    
     #emailBtn:hover {
       background-color: var(--primary);
     }
-
+    
     footer {
       text-align: center;
       padding: 30px 0;
@@ -411,50 +411,53 @@
       border-top: 1px solid var(--border);
       margin-top: 20px;
     }
-
+    
+    /* Responsive adjustments */
     @media (max-width: 640px) {
       .container {
         padding: 20px 15px;
       }
-
+      
       main {
         padding: 25px 20px;
       }
-
+      
       .embed-content {
         flex-direction: column;
         align-items: flex-start;
       }
-
+      
       .embed-thumbnail {
         width: 100%;
         height: 180px;
         margin-bottom: 15px;
       }
-
+      
       .buttons {
         flex-direction: column;
         gap: 15px;
       }
-
+      
       button {
         width: 100%;
       }
     }
-
+    
+    /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
+    
     main {
       animation: fadeIn 0.5s ease-out;
     }
-
+    
+    /* Utility classes */
     .hidden {
       display: none;
     }
-
+    
     .drag-active {
       border-color: var(--primary);
       background-color: var(--primary-bg);
@@ -480,7 +483,7 @@
     <div id="uploadSection">
       <h1>Share Your Media</h1>
       <p>Upload your pictures and videos, customize how they appear when shared, and get a unique link to share with anyone.</p>
-
+      
       <main>
         <form id="uploadForm">
           <div id="uploadArea" class="upload-area">
@@ -489,39 +492,39 @@
             <p>Supports images and videos up to 50MB</p>
             <input type="file" id="fileInput" accept="image/*,video/*">
           </div>
-
+          
           <div id="progressContainer" class="hidden">
             <div class="progress-bar">
               <div id="progressBar" class="progress"></div>
             </div>
             <p id="progressText">0% uploaded</p>
           </div>
-
+          
           <div id="previewArea" class="preview hidden">
             <h3>Preview</h3>
             <div id="filePreview"></div>
             <p id="fileInfo" class="file-info"></p>
           </div>
-
+          
           <div class="form-group">
             <label for="displayName">Display Name</label>
             <input type="text" id="displayName" placeholder="How you want to be known">
           </div>
-
+          
           <div class="form-group">
             <label for="bio">Bio or Description</label>
             <textarea id="bio" placeholder="Brief description to be shown in the embed"></textarea>
           </div>
-
+          
           <button type="submit" id="submitBtn">Generate Shareable Link</button>
         </form>
       </main>
     </div>
-
+    
     <div id="shareSection" class="hidden">
       <h1>Your media is ready to share!</h1>
       <p>Your upload has been processed and your custom link is ready.</p>
-
+      
       <main>
         <div class="share-success">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -530,7 +533,7 @@
           </svg>
           <span>Upload successful!</span>
         </div>
-
+        
         <div>
           <label>Your Shareable Link</label>
           <div class="share-link-container">
@@ -545,7 +548,7 @@
           </div>
           <p class="file-info">This link will create a custom embed when shared on Discord and other platforms.</p>
         </div>
-
+        
         <div class="embed-preview">
           <div class="embed-header">Preview of Embed</div>
           <div class="embed-content">
@@ -557,7 +560,7 @@
             </div>
           </div>
         </div>
-
+        
         <div class="buttons">
           <button id="newUploadBtn" class="upload-new">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -576,15 +579,16 @@
       </main>
     </div>
   </div>
-
+  
   <footer>
     &copy; <span id="currentYear"></span> ShareVault. All rights reserved.
   </footer>
 
   <script>
-
+    // Set current year in footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-
+    
+    // DOM elements
     const uploadSection = document.getElementById('uploadSection');
     const shareSection = document.getElementById('shareSection');
     const uploadForm = document.getElementById('uploadForm');
@@ -605,61 +609,67 @@
     const embedThumbnail = document.getElementById('embedThumbnail');
     const embedTitle = document.getElementById('embedTitle');
     const embedDescription = document.getElementById('embedDescription');
-
+    
+    // Variables
     let currentFile = null;
     let metaOgTitle = document.querySelector('meta[property="og:title"]');
     let metaOgDescription = document.querySelector('meta[property="og:description"]');
     let metaOgImage = document.querySelector('meta[property="og:image"]');
-
+    
+    // File drag & drop handling
     uploadArea.addEventListener('dragover', (e) => {
       e.preventDefault();
       e.stopPropagation();
       uploadArea.classList.add('drag-active');
     });
-
+    
     uploadArea.addEventListener('dragleave', (e) => {
       e.preventDefault();
       e.stopPropagation();
       uploadArea.classList.remove('drag-active');
     });
-
+    
     uploadArea.addEventListener('drop', (e) => {
       e.preventDefault();
       e.stopPropagation();
       uploadArea.classList.remove('drag-active');
-
+      
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
         handleFileSelect(e.dataTransfer.files[0]);
       }
     });
-
+    
+    // File input click handling
     uploadArea.addEventListener('click', () => {
       fileInput.click();
     });
-
+    
     fileInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files.length > 0) {
         handleFileSelect(e.target.files[0]);
       }
     });
-
+    
+    // Handle file selection
     function handleFileSelect(file) {
-
+      // Validate file type
       if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
         alert('Please select an image or video file.');
         return;
       }
-
+      
+      // Validate file size (max 50MB)
       if (file.size > 50 * 1024 * 1024) {
         alert('Please select a file smaller than 50MB.');
         return;
       }
-
+      
       currentFile = file;
-
+      
+      // Show file preview
       previewArea.classList.remove('hidden');
       filePreview.innerHTML = '';
-
+      
       if (file.type.startsWith('image/')) {
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
@@ -670,217 +680,320 @@
         video.controls = true;
         filePreview.appendChild(video);
       }
-
+      
+      // Show file info
       fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
     }
-
+    
+    // Format file size
     function formatFileSize(bytes) {
       if (bytes === 0) return '0 Bytes';
-
+      
       const k = 1024;
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
       const i = Math.floor(Math.log(bytes) / Math.log(k));
-
+      
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
-
+    
+    // Generate unique ID
     function generateId() {
-      return Math.random().toString(36).substring(2, 15);
+      return Date.now() + '-' + Math.random().toString(36).substring(2, 10);
     }
-
+    
+    // Save file to "data" folder (in browser environment)
+    function saveFileToDataFolder(file, fileId) {
+      return new Promise((resolve, reject) => {
+        // Create a fake URL that mimics a file save
+        const fileName = `${fileId}.${file.name.split('.').pop()}`;
+        const filePath = `data/${fileName}`;
+        
+        // In a real server-side environment, we'd actually write the file to disk
+        // For now, we'll store in localStorage
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileData = e.target.result;
+          try {
+            // Store the binary data with a reference
+            localStorage.setItem(`file_${fileId}`, fileData);
+            
+            // Return a fake path (this would be a real path on a server)
+            resolve(filePath);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = function(error) {
+          reject(error);
+        };
+        
+        // Read file as data URL
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    // Handle form submission
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
+      
       const displayName = displayNameInput.value.trim();
       const bio = bioInput.value.trim();
-
+      
+      // Validate form
       if (!currentFile) {
         alert('Please select a file to upload.');
         return;
       }
-
+      
       if (!displayName) {
         alert('Please enter a display name.');
         return;
       }
-
+      
+      // Show progress
       progressContainer.classList.remove('hidden');
-
+      
       try {
-
+        // Show upload progress
         let progress = 0;
         const interval = setInterval(() => {
           progress += 5;
-          if (progress <= 100) {
+          if (progress <= 95) {  // Stop at 95% to wait for actual completion
             progressBar.style.width = progress + '%';
             progressText.textContent = progress + '% uploaded';
-          } else {
-            clearInterval(interval);
           }
         }, 100);
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const fileData = e.target.result;
-
-          const fileId = generateId();
-
-          const pageId = generateId();
-
-          try {
-
-            console.log(`In a server app, would save to: data/${fileId}.${currentFile.name.split('.').pop()}`);
-
-          } catch (err) {
-            console.log('Note: Running in browser mode, not saving to disk');
-          }
-
-          const fileInfo = {
-            id: pageId,
-            displayName: displayName,
-            bio: bio || '',
-            fileName: currentFile.name,
-            fileType: currentFile.type,
-            fileSize: currentFile.size,
-            dataUrl: fileData
-          };
-
-          localStorage.setItem(`media_${pageId}`, JSON.stringify(fileInfo));
-
-          const shareUrl = `${window.location.origin}?id=${pageId}`;
-
-          setTimeout(() => {
-            clearInterval(interval);
-            progressBar.style.width = '100%';
-            progressText.textContent = '100% uploaded';
-
-            uploadSection.classList.add('hidden');
-            shareSection.classList.remove('hidden');
-
-            shareLink.value = shareUrl;
-
-            embedTitle.textContent = displayName;
-            embedDescription.textContent = bio;
-
-            if (currentFile.type.startsWith('image/')) {
-              const img = document.createElement('img');
-              img.src = URL.createObjectURL(currentFile);
-              embedThumbnail.innerHTML = '';
-              embedThumbnail.appendChild(img);
-            } else {
-
-              embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
-            }
-
-            document.title = `${displayName} | ShareVault`;
-
-            if (metaOgTitle) metaOgTitle.setAttribute('content', `${displayName} | ShareVault`);
-            if (metaOgDescription) metaOgDescription.setAttribute('content', bio);
-
-            if (currentFile.type.startsWith('image/')) {
-              if (!metaOgImage) {
-                metaOgImage = document.createElement('meta');
-                metaOgImage.setAttribute('property', 'og:image');
-                document.head.appendChild(metaOgImage);
-              }
-              metaOgImage.setAttribute('content', fileData);
-            }
-
-            window.history.pushState({}, '', `?id=${pageId}`);
-          }, 1500);
+        
+        // Generate IDs
+        const fileId = generateId();
+        const pageId = generateId();
+        
+        // Save file to data folder
+        const filePath = await saveFileToDataFolder(currentFile, fileId);
+        
+        // Create media info object
+        const mediaInfo = {
+          id: pageId,
+          fileId: fileId,
+          displayName: displayName,
+          bio: bio || '',
+          fileName: currentFile.name,
+          fileType: currentFile.type,
+          fileSize: currentFile.size,
+          filePath: filePath,
+          created: new Date().toISOString()
         };
-
-        reader.readAsDataURL(currentFile);
-
+        
+        // Save media info to storage
+        localStorage.setItem(`media_${pageId}`, JSON.stringify(mediaInfo));
+        
+        // Create a permanent index of all media
+        let mediaIndex = JSON.parse(localStorage.getItem('media_index') || '[]');
+        mediaIndex.push(pageId);
+        localStorage.setItem('media_index', JSON.stringify(mediaIndex));
+        
+        // Generate a properly formatted shareable link using HTML5 history
+        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${pageId}`;
+        
+        // Complete the progress
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+        progressText.textContent = '100% uploaded';
+        
+        // Show share section
+        uploadSection.classList.add('hidden');
+        shareSection.classList.remove('hidden');
+        
+        // Set share link
+        shareLink.value = shareUrl;
+        
+        // Set embed preview
+        embedTitle.textContent = displayName;
+        embedDescription.textContent = bio;
+        
+        // Set thumbnail preview
+        if (currentFile.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(currentFile);
+          embedThumbnail.innerHTML = '';
+          embedThumbnail.appendChild(img);
+        } else {
+          // Video icon for video files
+          embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
+        }
+        
+        // Update document title and meta tags for better sharing
+        document.title = `${displayName} | ShareVault`;
+        
+        // Update OpenGraph meta tags for better embeds
+        if (metaOgTitle) metaOgTitle.setAttribute('content', `${displayName} | ShareVault`);
+        if (metaOgDescription) metaOgDescription.setAttribute('content', bio);
+        
+        // For images, add og:image
+        if (currentFile.type.startsWith('image/')) {
+          const fileData = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsDataURL(currentFile);
+          });
+          
+          if (!metaOgImage) {
+            metaOgImage = document.createElement('meta');
+            metaOgImage.setAttribute('property', 'og:image');
+            document.head.appendChild(metaOgImage);
+          }
+          metaOgImage.setAttribute('content', fileData);
+        }
+        
+        // Update URL without reloading the page
+        window.history.pushState({id: pageId}, '', `?id=${pageId}`);
+        
       } catch (error) {
         console.error('Upload error:', error);
         alert('Error uploading file. Please try again.');
         progressContainer.classList.add('hidden');
       }
     });
-
+    
+    // Copy link to clipboard
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(shareLink.value);
-        alert('Link copied to clipboard!');
+        
+        // Show a nicer confirmation
+        const originalText = copyBtn.innerHTML;
+        copyBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Copied!
+        `;
+        
+        setTimeout(() => {
+          copyBtn.innerHTML = originalText;
+        }, 2000);
       } catch (err) {
         console.error('Failed to copy: ', err);
-
+        
+        // Fallback for older browsers
         shareLink.select();
         document.execCommand('copy');
         alert('Link copied to clipboard!');
       }
     });
-
+    
+    // Upload new file
     newUploadBtn.addEventListener('click', () => {
-
+      // Reset form
       uploadForm.reset();
       currentFile = null;
       previewArea.classList.add('hidden');
       progressContainer.classList.add('hidden');
-
+      
+      // Reset page state
       uploadSection.classList.remove('hidden');
       shareSection.classList.add('hidden');
-
+      
+      // Reset URL
       window.history.pushState({}, '', window.location.pathname);
-
+      
+      // Reset document title
       document.title = 'ShareVault - Upload and Share Media';
-
+      
+      // Reset OpenGraph meta tags
       if (metaOgTitle) metaOgTitle.setAttribute('content', 'ShareVault - Upload and Share Media');
       if (metaOgDescription) metaOgDescription.setAttribute('content', 'Upload and share your pictures and videos with custom embeds');
       if (metaOgImage) metaOgImage.remove();
     });
-
+    
+    // Share via email
     emailBtn.addEventListener('click', () => {
       const subject = "Check out my media on ShareVault";
       const body = `I've shared some media with you: ${shareLink.value}`;
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const mediaId = urlParams.get('id');
-
-      if (mediaId) {
-
-        const mediaInfoStr = localStorage.getItem(`media_${mediaId}`);
-
-        if (mediaInfoStr) {
-          const mediaInfo = JSON.parse(mediaInfoStr);
-
-          const shareUrl = `${window.location.origin}?id=${mediaId}`;
-          shareLink.value = shareUrl;
-
-          embedTitle.textContent = mediaInfo.displayName;
-          embedDescription.textContent = mediaInfo.bio;
-
-          if (mediaInfo.fileType.startsWith('image/')) {
+    
+    // Load media from URL parameter
+    async function loadMediaFromId(mediaId) {
+      // Try to load media info from storage
+      const mediaInfoStr = localStorage.getItem(`media_${mediaId}`);
+      
+      if (!mediaInfoStr) {
+        alert('Media not found. The link may be invalid or the media has been deleted.');
+        return false;
+      }
+      
+      try {
+        const mediaInfo = JSON.parse(mediaInfoStr);
+        
+        // Set share link
+        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${mediaId}`;
+        shareLink.value = shareUrl;
+        
+        // Set embed preview info
+        embedTitle.textContent = mediaInfo.displayName;
+        embedDescription.textContent = mediaInfo.bio;
+        
+        // Set embed thumbnail
+        if (mediaInfo.fileType.startsWith('image/')) {
+          // Get the file data from local storage
+          const fileData = localStorage.getItem(`file_${mediaInfo.fileId}`);
+          
+          if (fileData) {
             const img = document.createElement('img');
-            img.src = mediaInfo.dataUrl;
+            img.src = fileData;
             embedThumbnail.innerHTML = '';
             embedThumbnail.appendChild(img);
-          } else {
-
-            embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
-          }
-
-          document.title = `${mediaInfo.displayName} | ShareVault`;
-
-          if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName} | ShareVault`);
-          if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio);
-
-          if (mediaInfo.fileType.startsWith('image/')) {
+            
+            // Set og:image
             if (!metaOgImage) {
               metaOgImage = document.createElement('meta');
               metaOgImage.setAttribute('property', 'og:image');
               document.head.appendChild(metaOgImage);
             }
-            metaOgImage.setAttribute('content', mediaInfo.dataUrl);
+            metaOgImage.setAttribute('content', fileData);
           }
-
-          uploadSection.classList.add('hidden');
-          shareSection.classList.remove('hidden');
+        } else {
+          // Video placeholder
+          embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
         }
+        
+        // Update document title
+        document.title = `${mediaInfo.displayName} | ShareVault`;
+        
+        // Update OpenGraph meta tags
+        if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName} | ShareVault`);
+        if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio);
+        
+        // Show share section
+        uploadSection.classList.add('hidden');
+        shareSection.classList.remove('hidden');
+        
+        return true;
+      } catch (error) {
+        console.error('Error loading media:', error);
+        return false;
+      }
+    }
+    
+    // Handle browser navigation events
+    window.addEventListener('popstate', (event) => {
+      if (event.state && event.state.id) {
+        loadMediaFromId(event.state.id);
+      } else {
+        // Reset to upload view if no state
+        uploadSection.classList.remove('hidden');
+        shareSection.classList.add('hidden');
+      }
+    });
+    
+    // Check for media ID in URL on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const mediaId = urlParams.get('id');
+      
+      if (mediaId) {
+        loadMediaFromId(mediaId);
       }
     });
   </script>
