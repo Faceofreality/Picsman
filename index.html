@@ -872,10 +872,6 @@
           }
         }, 100);
         
-        // Generate IDs
-        const fileId = generateId();
-        const pageId = generateId();
-        
         // Get file data
         const fileData = await new Promise((resolve) => {
           const reader = new FileReader();
@@ -883,35 +879,9 @@
           reader.readAsDataURL(currentFile);
         });
         
-        // Store file data in localStorage
-        localStorage.setItem(`file_${fileId}`, fileData);
-        
-        // Create media info object
-        const mediaInfo = {
-          id: pageId,
-          fileId: fileId,
-          displayName: displayName,
-          bio: bio || '',
-          fileName: currentFile.name,
-          fileType: currentFile.type,
-          fileSize: currentFile.size,
-          created: new Date().toISOString()
-        };
-        
-        // Save media info to storage
-        localStorage.setItem(`media_${pageId}`, JSON.stringify(mediaInfo));
-        
-        // Create public file URL
-        let publicFileUrl = '';
-        if (currentFile.type.startsWith('image/')) {
-          // For images, we'll use a separate HTML page that only shows the image
-          // We'll create this HTML file with your image embedded in base64
-          const imageFileName = `${fileId}.html`;
-          publicFileUrl = imageFileName;
-          
-          // Create HTML content with embedded image data
-          const imageHtml = `
-<!DOCTYPE html>
+        // Create a standalone HTML page that contains the image and display info
+        // This page is completely self-contained and can be shared with anyone
+        const viewerHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -923,41 +893,141 @@
   <meta property="og:site_name" content="ShareVault">
   <meta property="og:image" content="${fileData}">
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    .container {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
       min-height: 100vh;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      margin-bottom: 20px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #3b82f6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .media-card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 40px;
+    }
+    .media-content {
+      max-height: 70vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background-color: #000;
     }
-    img {
+    .media-content img {
       max-width: 100%;
-      max-height: 100vh;
+      max-height: 70vh;
       object-fit: contain;
+    }
+    .media-info {
+      padding: 24px;
+    }
+    .media-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+    .media-description {
+      font-size: 1.1rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .media-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .media-source {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    .media-home-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    footer {
+      text-align: center;
+      padding: 30px 0;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-top: auto;
     }
   </style>
 </head>
 <body>
-  <img src="${fileData}" alt="${displayName}">
+  <div class="container">
+    <header>
+      <div class="logo">ShareVault</div>
+    </header>
+    
+    <div class="media-card">
+      <div class="media-content">
+        <img src="${fileData}" alt="${displayName}">
+      </div>
+      <div class="media-info">
+        <h1 class="media-title">${displayName}</h1>
+        <p class="media-description">${bio || ''}</p>
+        <div class="media-footer">
+          <div class="media-source">Shared via ShareVault</div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>&copy; ${new Date().getFullYear()} ShareVault</footer>
+  </div>
 </body>
-</html>
-          `;
-          
-          // Store the HTML content
-          localStorage.setItem(`html_${fileId}`, imageHtml);
-        }
+</html>`;
+        
+        // Encode the HTML as base64 to make it part of the URL
+        const base64ViewerHtml = btoa(unescape(encodeURIComponent(viewerHtml)));
+        
+        // Create a shareable link that will open the HTML directly
+        // The data is embedded directly in the URL, so it's completely portable
+        // The #view hash tells the system to load the embedded page
+        const shareUrl = `${window.location.href.split('?')[0]}#view:${base64ViewerHtml}`;
         
         // Complete the progress
         clearInterval(interval);
         progressBar.style.width = '100%';
         progressText.textContent = '100% uploaded';
-        
-        // Generate a properly formatted shareable link
-        // We'll use a special format that includes all necessary data
-        // This is a simpler approach than using a server
-        const shareUrl = `${window.location.href.split('?')[0]}?id=${pageId}`;
         
         // Show share section
         uploadSection.classList.add('hidden');
@@ -999,17 +1069,13 @@
           metaOgImage.setAttribute('content', fileData);
         }
         
-        // Add og:url 
-        let ogUrl = document.querySelector('meta[property="og:url"]');
-        if (!ogUrl) {
-          ogUrl = document.createElement('meta');
-          ogUrl.setAttribute('property', 'og:url');
-          document.head.appendChild(ogUrl);
-        }
-        ogUrl.setAttribute('content', shareUrl);
-        
-        // Update URL without reloading the page
-        window.history.pushState({id: pageId}, '', `?id=${pageId}`);
+        // Store media info in localStorage for your own reference
+        // This is not used for sharing - just for your own history
+        localStorage.setItem(`media_${Date.now()}`, JSON.stringify({
+          displayName: displayName,
+          bio: bio || '',
+          shareUrl: shareUrl
+        }));
         
       } catch (error) {
         console.error('Upload error:', error);
@@ -1077,124 +1143,41 @@
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
     
-    // Display media in the dedicated viewer
-    function displayMediaViewPage(mediaInfo, fileData) {
-      // Clear previous content
-      viewMediaContent.innerHTML = '';
-      
-      // Add media to the view
-      if (mediaInfo.fileType.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = fileData;
-        viewMediaContent.appendChild(img);
-      } else if (mediaInfo.fileType.startsWith('video/')) {
-        const video = document.createElement('video');
-        video.src = fileData;
-        video.controls = true;
-        video.autoplay = false;
-        viewMediaContent.appendChild(video);
-      }
-      
-      // Set title and description
-      viewMediaTitle.textContent = mediaInfo.displayName;
-      viewMediaDescription.textContent = mediaInfo.bio || '';
-      
-      // Update document title and meta tags for better sharing
-      document.title = `${mediaInfo.displayName} | ShareVault`;
-      
-      // Update OpenGraph meta tags for better embeds
-      if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName}`);
-      if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio || '');
-      
-      // For images, add og:image
-      if (mediaInfo.fileType.startsWith('image/')) {
-        if (!metaOgImage) {
-          metaOgImage = document.createElement('meta');
-          metaOgImage.setAttribute('property', 'og:image');
-          document.head.appendChild(metaOgImage);
-        }
-        metaOgImage.setAttribute('content', fileData);
-      }
-      
-      // Show view page
-      uploadSection.classList.add('hidden');
-      shareSection.classList.add('hidden');
-      viewMediaSection.classList.remove('hidden');
-    }
-    
-    // Load media from URL parameter
-    async function loadMediaFromId(mediaId) {
-      // Check if we're in direct view mode (when someone clicks a shared link)
-      const directView = true; // Always show the view page for shared links
-      
-      // Try to load media info from storage
-      const mediaInfoStr = localStorage.getItem(`media_${mediaId}`);
-      
-      if (!mediaInfoStr) {
-        alert('Media not found. The link may be invalid or the media has been deleted.');
-        return false;
-      }
-      
-      try {
-        const mediaInfo = JSON.parse(mediaInfoStr);
-        
-        // Get the file data from local storage
-        const fileData = localStorage.getItem(`file_${mediaInfo.fileId}`);
-        
-        if (!fileData) {
-          alert('Media file not found. It may have been deleted.');
-          return false;
-        }
-        
-        // Display the dedicated media view
-        displayMediaViewPage(mediaInfo, fileData);
-        
-        // Set OpenGraph meta tags
-        if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName} | ShareVault`);
-        if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio || '');
-        
-        // Add og:image 
-        if (mediaInfo.fileType.startsWith('image/')) {
-          if (!metaOgImage) {
-            metaOgImage = document.createElement('meta');
-            metaOgImage.setAttribute('property', 'og:image');
-            document.head.appendChild(metaOgImage);
-          }
-          metaOgImage.setAttribute('content', fileData);
-        }
-        
-        return true;
-      } catch (error) {
-        console.error('Error loading media:', error);
-        return false;
-      }
-    }
-    
     // Handle browser navigation events
     window.addEventListener('popstate', (event) => {
-      if (event.state && event.state.id) {
-        loadMediaFromId(event.state.id);
-      } else {
-        // Reset to upload view if no state
-        uploadSection.classList.remove('hidden');
-        shareSection.classList.add('hidden');
-        viewMediaSection.classList.add('hidden');
-      }
+      // If we navigate back to the main page, show the upload interface
+      uploadSection.classList.remove('hidden');
+      shareSection.classList.add('hidden');
+      viewMediaSection.classList.add('hidden');
     });
     
-    // Check for media ID in URL on page load
+    // Check for embedded view data in URL hash on page load
     window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const mediaId = urlParams.get('id');
-      
-      if (mediaId) {
-        loadMediaFromId(mediaId);
-      } else {
-        // If no ID, show upload section
-        uploadSection.classList.remove('hidden');
-        shareSection.classList.add('hidden');
-        viewMediaSection.classList.add('hidden');
+      // Check if the URL contains a view hash (for shared links)
+      if (window.location.hash.startsWith('#view:')) {
+        try {
+          // Get the base64 HTML from the hash
+          const base64Html = window.location.hash.substring(6); // Skip '#view:'
+          // Decode the HTML
+          const viewerHtml = decodeURIComponent(escape(atob(base64Html)));
+          
+          // Replace the entire document with the decoded HTML
+          // This effectively loads the standalone viewer page
+          document.open();
+          document.write(viewerHtml);
+          document.close();
+          
+          // No need to do anything else since we've replaced the entire page
+          return;
+        } catch (error) {
+          console.error('Error loading shared view:', error);
+        }
       }
+      
+      // If there's no view hash, show the upload interface
+      uploadSection.classList.remove('hidden');
+      shareSection.classList.add('hidden');
+      viewMediaSection.classList.add('hidden');
     });
   </script>
 </body>
