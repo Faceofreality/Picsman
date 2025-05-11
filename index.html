@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Upload</title>
+  <title>Share Files</title>
   <link href="assets/css/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="upload-container">
@@ -55,17 +56,31 @@
       }
     }
 
+    function generateRandomString(length) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      return Array.from(crypto.getRandomValues(new Uint8Array(length)))
+        .map(x => chars[x % chars.length]).join('');
+    }
+
     shareButton.addEventListener('click', () => {
       if (currentFile) {
         const caption = document.getElementById('caption').value || 'Shared File';
         const fileUrl = URL.createObjectURL(currentFile);
+        const randomId = generateRandomString(8);
         const shareLink = `
           <div class="share-item">
-            <h3>${caption}</h3>
-            <a href="${fileUrl}" download="${currentFile.name}">Download File</a>
+            <div class="share-header">
+              <h3>${caption}</h3>
+              <span class="file-size">${(currentFile.size / 1024 / 1024).toFixed(2)} MB</span>
+            </div>
+            <div class="share-link">
+              <span>share.files/${randomId}</span>
+              <button onclick="window.open('${fileUrl}')" class="view-btn">View</button>
+              <button onclick="location.href='${fileUrl}';return false;" class="download-btn">Download</button>
+            </div>
           </div>
         `;
-        shareLinks.innerHTML += shareLink;
+        shareLinks.innerHTML = shareLink + shareLinks.innerHTML;
       }
     });
   </script>
