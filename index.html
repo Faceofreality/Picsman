@@ -1016,13 +1016,45 @@
 </body>
 </html>`;
         
-        // Encode the HTML as base64 to make it part of the URL
-        const base64ViewerHtml = btoa(unescape(encodeURIComponent(viewerHtml)));
+        // Instead of embedding in the URL (which makes it too long),
+        // save the HTML to the server and get a short URL
+        let shareUrl = '';
         
-        // Create a shareable link that will open the HTML directly
-        // The data is embedded directly in the URL, so it's completely portable
-        // The #view hash tells the system to load the embedded page
-        const shareUrl = `${window.location.href.split('?')[0]}#view:${base64ViewerHtml}`;
+        try {
+          const response = await fetch('/api/shorten', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              html: viewerHtml,
+              displayName: displayName,
+              bio: bio || ''
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to create short URL');
+          }
+          
+          const result = await response.json();
+          
+          // Get the short URL from the response
+          shareUrl = `${window.location.protocol}//${window.location.host}${result.shortUrl}`;
+        } catch (error) {
+          console.error('Error creating short URL:', error);
+          
+          // Fallback to direct data URL if URL shortening fails
+          alert('Using longer URL as a fallback. For shorter URLs, run the server with: node server.js');
+          
+          // Encode the HTML as base64 to make it part of the URL (fallback)
+          const base64ViewerHtml = btoa(unescape(encodeURIComponent(viewerHtml)));
+          
+          // Create a shareable link that will open the HTML directly
+          // The data is embedded directly in the URL, so it's completely portable
+          // Truncate the base64 data to make the URL shorter (not ideal but better than nothing)
+          shareUrl = `${window.location.href.split('?')[0]}#view:${base64ViewerHtml.substring(0, 2000)}...`;
+        }
         
         // Complete the progress
         clearInterval(interval);
