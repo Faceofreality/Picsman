@@ -9,8 +9,6 @@
   <meta property="og:description" content="Upload and share your pictures and videos with custom embeds">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ShareVault">
-  <!-- README: To view this website, open index.html in a browser. Photos/videos are stored in browser memory. -->
-  <!-- Open Graph image will be set dynamically when viewing content -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* Basic Reset */
@@ -842,60 +840,6 @@
       return Date.now() + '-' + Math.random().toString(36).substring(2, 10);
     }
     
-    // Save file to "data" folder (actual server file storage)
-    function saveFileToDataFolder(file, fileId) {
-      return new Promise((resolve, reject) => {
-        // Create a file name with the file ID and extension
-        const fileExtension = file.name.split('.').pop();
-        const fileName = `${fileId}.${fileExtension}`;
-        const filePath = `data/${fileName}`;
-        
-        // Read the file as data URL to send to the server
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-          const fileData = e.target.result;
-          
-          try {
-            // Send the file data to the server to save in the data folder
-            const response = await fetch('/upload', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                fileId: fileId,
-                fileData: fileData,
-                fileName: file.name,
-                contentType: file.type
-              })
-            });
-            
-            const result = await response.json();
-            
-            if (!result.success) {
-              throw new Error(result.error || 'Failed to save file');
-            }
-            
-            // Also store in localStorage as a backup
-            localStorage.setItem(`file_${fileId}`, fileData);
-            
-            // Return the file path that can be used in embeds
-            resolve(result.filePath);
-          } catch (error) {
-            console.error('Error saving file to server:', error);
-            reject(error);
-          }
-        };
-        
-        reader.onerror = function(error) {
-          console.error('Error reading file:', error);
-          reject(error);
-        };
-        
-        reader.readAsDataURL(file);
-      });
-    }
-    
     // Handle form submission
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -932,8 +876,15 @@
         const fileId = generateId();
         const pageId = generateId();
         
-        // Save file to data folder
-        const filePath = await saveFileToDataFolder(currentFile, fileId);
+        // Get file data
+        const fileData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(currentFile);
+        });
+        
+        // Store file data in localStorage
+        localStorage.setItem(`file_${fileId}`, fileData);
         
         // Create media info object
         const mediaInfo = {
@@ -944,35 +895,69 @@
           fileName: currentFile.name,
           fileType: currentFile.type,
           fileSize: currentFile.size,
-          filePath: filePath,
           created: new Date().toISOString()
         };
         
         // Save media info to storage
         localStorage.setItem(`media_${pageId}`, JSON.stringify(mediaInfo));
         
-        // Create a permanent index of all media
-        let mediaIndex = JSON.parse(localStorage.getItem('media_index') || '[]');
-        mediaIndex.push(pageId);
-        localStorage.setItem('media_index', JSON.stringify(mediaIndex));
-        
-        // Generate a properly formatted shareable link using HTML5 history
-        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${pageId}`;
+        // Create public file URL
+        let publicFileUrl = '';
+        if (currentFile.type.startsWith('image/')) {
+          // For images, we'll use a separate HTML page that only shows the image
+          // We'll create this HTML file with your image embedded in base64
+          const imageFileName = `${fileId}.html`;
+          publicFileUrl = imageFileName;
+          
+          // Create HTML content with embedded image data
+          const imageHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${displayName} | ShareVault</title>
+  <meta property="og:title" content="${displayName} | ShareVault">
+  <meta property="og:description" content="${bio || ''}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ShareVault">
+  <meta property="og:image" content="${fileData}">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #000;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100vh;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <img src="${fileData}" alt="${displayName}">
+</body>
+</html>
+          `;
+          
+          // Store the HTML content
+          localStorage.setItem(`html_${fileId}`, imageHtml);
+        }
         
         // Complete the progress
         clearInterval(interval);
         progressBar.style.width = '100%';
         progressText.textContent = '100% uploaded';
         
-        // Get file data for OpenGraph tags
-        const fileData = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
-          reader.readAsDataURL(currentFile);
-        });
-        
-        // Save file data URL for embedding
-        localStorage.setItem(`filedata_${fileId}`, fileData);
+        // Generate a properly formatted shareable link
+        // We'll use a special format that includes all necessary data
+        // This is a simpler approach than using a server
+        const shareUrl = `${window.location.href.split('?')[0]}?id=${pageId}`;
         
         // Show share section
         uploadSection.classList.add('hidden');
@@ -1000,39 +985,28 @@
         // Update document title and meta tags for better sharing
         document.title = `${displayName} | ShareVault`;
         
-        // Create absolute URLs for OpenGraph tags
-        const currentUrl = window.location.href;
-        const domain = window.location.origin;
-        
-        // Get the absolute URL for the image
-        let imageFullUrl = '';
-        if (currentFile.type.startsWith('image/')) {
-          // Create a full absolute URL to the image for better Discord embeds
-          imageFullUrl = `${domain}${filePath}`;
-        }
-        
-        // Update OpenGraph meta tags for better embeds
+        // Set up OpenGraph tags for Discord sharing
         if (metaOgTitle) metaOgTitle.setAttribute('content', `${displayName} | ShareVault`);
         if (metaOgDescription) metaOgDescription.setAttribute('content', bio || '');
         
-        // For images, add og:image with absolute URL
+        // For images, add og:image
         if (currentFile.type.startsWith('image/')) {
           if (!metaOgImage) {
             metaOgImage = document.createElement('meta');
             metaOgImage.setAttribute('property', 'og:image');
             document.head.appendChild(metaOgImage);
           }
-          metaOgImage.setAttribute('content', imageFullUrl);
-          
-          // Also add more OpenGraph tags for better Discord embeds
-          let ogUrl = document.querySelector('meta[property="og:url"]');
-          if (!ogUrl) {
-            ogUrl = document.createElement('meta');
-            ogUrl.setAttribute('property', 'og:url');
-            document.head.appendChild(ogUrl);
-          }
-          ogUrl.setAttribute('content', shareUrl);
+          metaOgImage.setAttribute('content', fileData);
         }
+        
+        // Add og:url 
+        let ogUrl = document.querySelector('meta[property="og:url"]');
+        if (!ogUrl) {
+          ogUrl = document.createElement('meta');
+          ogUrl.setAttribute('property', 'og:url');
+          document.head.appendChild(ogUrl);
+        }
+        ogUrl.setAttribute('content', shareUrl);
         
         // Update URL without reloading the page
         window.history.pushState({id: pageId}, '', `?id=${pageId}`);
@@ -1151,7 +1125,7 @@
     // Load media from URL parameter
     async function loadMediaFromId(mediaId) {
       // Check if we're in direct view mode (when someone clicks a shared link)
-      const directView = !window.location.search.includes('edit');
+      const directView = true; // Always show the view page for shared links
       
       // Try to load media info from storage
       const mediaInfoStr = localStorage.getItem(`media_${mediaId}`);
@@ -1165,62 +1139,29 @@
         const mediaInfo = JSON.parse(mediaInfoStr);
         
         // Get the file data from local storage
-        const fileData = localStorage.getItem(`file_${mediaInfo.fileId}`) || 
-                         localStorage.getItem(`filedata_${mediaInfo.fileId}`);
+        const fileData = localStorage.getItem(`file_${mediaInfo.fileId}`);
         
         if (!fileData) {
           alert('Media file not found. It may have been deleted.');
           return false;
         }
         
-        // If in direct view mode, show the media view page
-        if (directView) {
-          // Display the dedicated media view
-          displayMediaViewPage(mediaInfo, fileData);
-          return true;
-        }
+        // Display the dedicated media view
+        displayMediaViewPage(mediaInfo, fileData);
         
-        // If we're in edit mode, show the share screen
-        // Set share link
-        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${mediaId}`;
-        shareLink.value = shareUrl;
-        
-        // Set embed preview info
-        embedTitle.textContent = mediaInfo.displayName;
-        embedDescription.textContent = mediaInfo.bio;
-        
-        // Set embed thumbnail
-        if (mediaInfo.fileType.startsWith('image/')) {
-          if (fileData) {
-            const img = document.createElement('img');
-            img.src = fileData;
-            embedThumbnail.innerHTML = '';
-            embedThumbnail.appendChild(img);
-            
-            // Set og:image
-            if (!metaOgImage) {
-              metaOgImage = document.createElement('meta');
-              metaOgImage.setAttribute('property', 'og:image');
-              document.head.appendChild(metaOgImage);
-            }
-            metaOgImage.setAttribute('content', fileData);
-          }
-        } else {
-          // Video placeholder
-          embedThumbnail.innerHTML = '<div style="background:#e5e7eb;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">🎬</div>';
-        }
-        
-        // Update document title
-        document.title = `${mediaInfo.displayName} | ShareVault`;
-        
-        // Update OpenGraph meta tags
-        if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName}`);
+        // Set OpenGraph meta tags
+        if (metaOgTitle) metaOgTitle.setAttribute('content', `${mediaInfo.displayName} | ShareVault`);
         if (metaOgDescription) metaOgDescription.setAttribute('content', mediaInfo.bio || '');
         
-        // Show share section
-        uploadSection.classList.add('hidden');
-        shareSection.classList.remove('hidden');
-        viewMediaSection.classList.add('hidden');
+        // Add og:image 
+        if (mediaInfo.fileType.startsWith('image/')) {
+          if (!metaOgImage) {
+            metaOgImage = document.createElement('meta');
+            metaOgImage.setAttribute('property', 'og:image');
+            document.head.appendChild(metaOgImage);
+          }
+          metaOgImage.setAttribute('content', fileData);
+        }
         
         return true;
       } catch (error) {
